@@ -3,8 +3,8 @@
 Universidad de Medellin — Curso MLOps — Proyecto Final
 
 Integrantes : 
-Juan Jose Basante Navarro
-Luisa Fernanda Franco Giraldo
+Juan Jose Basante Navarro /
+Luisa Fernanda Franco Giraldo/
 Juan Mauricio Sanchez Restrepo
 
 ---
