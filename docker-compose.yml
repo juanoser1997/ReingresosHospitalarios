@@ -1,0 +1,75 @@
+services:
+  mlflow:
+    build: .
+    container_name: mlflow
+    command:
+      - sh
+      - -c
+      - |
+        mkdir -p /mlflow/artifacts
+        mlflow server \
+          --backend-store-uri sqlite:////mlflow/mlflow.db \
+          --default-artifact-root /mlflow/artifacts \
+          --serve-artifacts \
+          --host 0.0.0.0 \
+          --port 5000 \
+          --allowed-hosts "*"
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/mlflow
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  trainer:
+    build: .
+    container_name: ml_trainer
+    command: sh -c "python scripts/wait_for_mlflow.py && python scripts/run_training_if_needed.py"
+    depends_on:
+      mlflow:
+        condition: service_healthy
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_ARTIFACT_URI: http://mlflow:5000
+      MODEL_NAME: diabetes-readmission-xgboost
+      MODEL_STAGE: Production
+      N_TRIALS: ${N_TRIALS:-2}
+      OPTUNA_STORAGE: sqlite:////app/data/optuna.db
+      MLFLOW_MAX_RETRIES: 30
+      MLFLOW_RETRY_DELAY: 5
+      MLFLOW_WAIT_TIMEOUT: 300
+      MLFLOW_WAIT_INTERVAL: 5
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - mlflow_data:/mlflow
+
+  api:
+    build: .
+    container_name: ml_api
+    command: sh -c "python scripts/wait_for_mlflow.py && uvicorn src.api.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      mlflow:
+        condition: service_healthy
+      trainer:
+        condition: service_completed_successfully
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_ARTIFACT_URI: http://mlflow:5000
+      MODEL_NAME: diabetes-readmission-xgboost
+      MODEL_STAGE: Production
+      DECISION_THRESHOLD: ${DECISION_THRESHOLD:-0.3}
+      MLFLOW_WAIT_TIMEOUT: 300
+      MLFLOW_WAIT_INTERVAL: 5
+    volumes:
+      - ./data:/app/data:ro
+      - mlflow_data:/mlflow
+
+volumes:
+  mlflow_data:

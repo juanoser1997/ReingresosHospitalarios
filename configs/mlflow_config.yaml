@@ -1,0 +1,29 @@
+# Configuracion de MLflow para el proyecto de enfermedades de alto costo
+
+tracking:
+  uri: "sqlite:///mlflow.db"
+  experiment_name: "diabetes-readmission-prediction"
+
+artifact_store:
+  root: "./models/artifacts"
+
+registry:
+  models:
+    - name: "diabetes-readmission-xgboost"
+      description: >
+        XGBoost para prediccion de reingreso hospitalario en menos de 30 dias
+        en pacientes diabeticos. Entrenado con el dataset UCI Diabetes 130-US
+        Hospitals (1999-2008). Optimizado con Optuna.
+
+stages:
+  - None
+  - Staging
+  - Production
+  - Archived
+
+# Etiquetas estandar para todos los runs
+default_tags:
+  project: "mlops-alto-costo"
+  domain: "salud"
+  dataset: "diabetes_130_uci"
+  university: "universidad_de_medellin"

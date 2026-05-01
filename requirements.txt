@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+pandas
+numpy
+scikit-learn
+xgboost
+mlflow
+joblib
+pydantic
+python-multipart
+optuna
+ucimlrepo
+pyyaml
