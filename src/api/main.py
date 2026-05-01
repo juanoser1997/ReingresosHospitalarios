@@ -12,7 +12,7 @@ import mlflow
 import mlflow.pyfunc
 import pandas as pd
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.ui import UI_HTML
@@ -171,7 +171,7 @@ app.add_middleware(
 
 @app.get("/", include_in_schema=False)
 def root():
-    return {"service": "mlops-alto-costo", "status": "ok", "docs": "/docs", "ui": "/ui"}
+    return RedirectResponse(url="/ui")
 
 
 @app.get("/ui", response_class=HTMLResponse, include_in_schema=False)

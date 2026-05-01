@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+.env
+
+# Datos (gestionados fuera de git)
+data/raw/
+data/processed/
+
+# Modelos entrenados (gestionados con MLflow)
+models/artifacts/
+models/registry/
+*.pkl
+*.joblib
+
+# MLflow y Optuna
+mlflow.db
+mlruns/
+optuna.db
+
+# Logs
+logs/
+*.log
+
+# Testing
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# uv
+uv.lock
